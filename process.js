@@ -5,7 +5,6 @@ var uurl = require('url');
 var path = require('path');
 //引入第三方模块
 var formidable = require('formidable');
-var template = require('art-template');
 //当浏览器请求根目录时，将首页响应回去
 module.exports.getIndex = function(req,res) {
   fs.readFile('./data.json',function(err,hero){
@@ -138,11 +137,10 @@ module.exports.upload = function(req, res) {
     //先得到图片的名
     var imgName = path.parse(files.img.path).base;
     //将图片生成的名称返回到浏览器
-    var obj = {
+    res.json({
       imgName: imgName,
       state: 1
-    };
-    res.end(JSON.stringify(obj));
+    });
   });
 };
 //404

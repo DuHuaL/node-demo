@@ -32,9 +32,21 @@
   },
   {
    "name": "貂蝉11",
-   "gender": "女",
+   "gender": "男",
    "img": "/imgs/upload_6bc62ea9a583a50df78e1d1482c635f7.JPG",
    "id": 6
+  },
+  {
+   "name": "吕布",
+   "gender": "男",
+   "img": "/imgs/upload_a459c1d9b1341f4ad9eaf7168a166fa6.jpg",
+   "id": 7
+  },
+  {
+   "name": "张飞",
+   "gender": "女",
+   "img": "/imgs/upload_219e762dbc08d74a7051dd0cbd56110a.JPG",
+   "id": 8
   }
  ]
 }
