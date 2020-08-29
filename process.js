@@ -126,14 +126,6 @@ module.exports.del = function(req,res) {
     });
   });
 };
-//处理静态文件
-module.exports.static = function(req,res) {
-  var url = req.url;
-  fs.readFile('.' + url, function (err, data) {
-    if (err) throw err;
-    res.end(data);
-  });
-};
 //处理图片预览
 module.exports.upload = function(req, res) {
   //使用formidable接受
