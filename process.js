@@ -2,6 +2,7 @@
 //引入核心模块
 var fs = require('fs');
 var uurl = require('url');
+var path = require('path');
 //引入第三方模块
 var formidable = require('formidable');
 var template = require('art-template');
@@ -19,40 +20,7 @@ module.exports.getAdd = function(req,res) {
 };
 //提交新增数据
 module.exports.postAdd = function(req,res) {
-  //---------------formidable---------接受数据----------------------------------//
-    //创建一个formidable对象
-    const form = formidable({ multiples: true });
-    //调用parse()方法
-    //    req:请求报文
-    //      回调函数：
-    //              err: 错误提示
-    //              fields: 字段 (浏览器提交过来的字段){name: '李白',gender: '男'}
-    //              files: 文件（图片）
-    //修改formidable中保存图片的路径
-    form.uploadDir = './imgs';
-    //加上保存图片的后缀名
-    form.keepExtensions = true;
-    form.parse(req, (err, fields, files) => {
-      //将数据保存到data.json中
-      //得到img属性
-      var img = '\\' + files.img.path;
-      fields.img = img;
-      //得到id
-      fs.readFile('./data.json', function (err, hero) {
-        if (err) throw err;
-        hero = JSON.parse(hero.toString());
-        var id = hero.heros[hero.heros.length - 1].id + 1;
-        fields.id = id;
-        //将新的对象添加到heros中
-        hero.heros.push(fields);
-        //将新的数据写入data.json中
-        fs.writeFile('./data.json', JSON.stringify(hero, null, ' '), function (err1) {
-          if (err1) throw err1;
-          res.setHeader('content-type', 'text/html;charset=utf-8');
-          res.end('<script>alert("新增成功");window.location="/"</script>');
-        });
-      });
-    });
+
 };
 //获取修改页面
 module.exports.getEdit = function(req,res) {
@@ -137,6 +105,25 @@ module.exports.static = function(req,res) {
   fs.readFile('.' + url, function (err, data) {
     if (err) throw err;
     res.end(data);
+  });
+};
+//处理图片预览
+module.exports.upload = function(req, res) {
+  //使用formidable接受
+  const form = formidable({ multiples: true });
+  //修改图片的上传路径
+  form.uploadDir = './imgs';
+  //保留图片的后缀
+  form.keepExtensions = true;
+  form.parse(req, (err, fields, files) => {
+    //先得到图片的名
+    var imgName = path.parse(files.img.path).base;
+    //将图片生成的名称返回到浏览器
+    var obj = {
+      imgName: imgName,
+      state: 1
+    };
+    res.end(JSON.stringify(obj));
   });
 };
 //404

@@ -23,8 +23,8 @@ router
   })
   .get('/del',function(req,res){
     process.del(req,res);
-  });
-//处理静态资源
+  })
+  .post('/upload',process.upload);
 
 
 //暴露路由

@@ -6,12 +6,17 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <style>
-            table {
-                width: 400px;
-                height: 300px;
-                margin: 100px auto;
-                border: 2px solid green;
-            }
+      table {
+          width: 400px;
+          height: 300px;
+          margin: 100px auto;
+          border: 2px solid green;
+      }
+      #img{
+        width: 50px;
+        height: 50px;
+        display: block;
+      }
     </style>
 </head>
 <body>
@@ -27,7 +32,7 @@
             </tr>
             <tr>
                 <th>英雄图像</th>
-                <td><input type="file" name="img"></td>
+                <td><img src="" alt="" id="img"><input type="file" name="img" id="preView"></td>
             </tr>
             <tr>
                 <th></th>
@@ -35,5 +40,30 @@
             </tr>
         </table>
     </form>
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script>
+        $('#preView').on('change',function(){
+            //提交的参数
+            var data = $('#preView')[0].files[0];
+            //创建一个FormData对象
+            var fd = new FormData();
+            //添加参数到这个对象
+            fd.append('img',data);
+            //选择图片后提交到服务器
+            $.ajax({
+                url: '/upload',
+                type: 'post',
+                data: fd,//要提交的数据
+                contentType:false,//必须：参数类型
+                processData: false,//用于对data参数进行序列化处理，这里必须是false
+                dataType: 'json',
+                success:function(data){
+									if(data.state == 1) {
+                    $('#img').attr('src','/imgs/'+data.imgName);
+									}
+                }
+            });
+        });
+    </script>
 </body>
 </html>
