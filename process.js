@@ -57,28 +57,19 @@ module.exports.postAdd = function(req,res) {
 //获取修改页面
 module.exports.getEdit = function(req,res) {
   var url = req.url;
-  fs.readFile('./views/edit.html', function (err, data) {
-    if (err) throw err;
-    //将数据填充到页面上
-    //先获取要修改英雄id
-    var id = uurl.parse(url, true).query.id;
-    //根据id得到对应的数据
-    //先将data.json中所有的数据读取
-    fs.readFile('./data.json', function (err1, hero) {
-      if (err1) throw err1;
-      var hero = JSON.parse(hero.toString());
-      //根据id找对应的数据
-      var obj;
-      for (var i = 0; i < hero.heros.length; i++) {
-        if (hero.heros[i].id == id) {
-          obj = hero.heros[i];
-          break;
-        }
+  var id = uurl.parse(url, true).query.id;
+  fs.readFile('./data.json', function (err1, hero) {
+    if (err1) throw err1;
+    var hero = JSON.parse(hero.toString());
+    //根据id找对应的数据
+    var obj;
+    for (var i = 0; i < hero.heros.length; i++) {
+      if (hero.heros[i].id == id) {
+        obj = hero.heros[i];
+        break;
       }
-      //将模板与数据结合
-      var str = template.compile(data.toString())(obj);
-      res.end(str);
-    });
+    }
+    res.render('edit.html',obj);
   });
 };
 //提交修改数据
