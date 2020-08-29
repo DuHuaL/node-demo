@@ -20,7 +20,34 @@ module.exports.getAdd = function(req,res) {
 };
 //提交新增数据
 module.exports.postAdd = function(req,res) {
-
+  //满足预览功能大代码
+  //接受参数
+  var str = '';
+  req.on('data',function(chunck){
+    str += chunck;
+  });
+  req.on('end',function(){
+    var paramsObj = uurl.parse('?'+str,true).query;
+    var data1 = JSON.stringify(paramsObj);
+    paramsObj = JSON.parse(data1);
+    //将新增的数据写入到data.json中
+    fs.readFile('./data.json',function(err,hero){
+      if(err) throw err;
+      hero = JSON.parse(hero.toString());
+      var id = hero.heros[hero.heros.length - 1].id + 1;
+      paramsObj.id = id;
+      hero.heros.push(paramsObj);
+      //重新写入
+      fs.writeFile('./data.json',JSON.stringify(hero,null, ' '),function(err1){
+        if(err1) throw err1;
+        var returnObj = {
+          state: 1,
+          msg: '新增成功'
+        };
+        res.end(JSON.stringify(returnObj));
+      });
+    });
+  });
 };
 //获取修改页面
 module.exports.getEdit = function(req,res) {

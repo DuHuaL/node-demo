@@ -27,14 +27,8 @@
   {
    "name": "貂蝉",
    "gender": "女",
-   "img": "\\imgs\\upload_01ce90ddd0938ddb5b6a083ee22c1aa8.jpg",
+   "img": "/imgs/upload_e547bcca77b74f8f220b61db7f045c52.jpg",
    "id": 5
-  },
-  {
-   "name": "达摩",
-   "gender": "女",
-   "img": "\\imgs\\upload_89b618e87f90c9a24920fc9a99b100ab.jpg",
-   "id": 6
   }
  ]
 }

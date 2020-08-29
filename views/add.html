@@ -20,26 +20,27 @@
     </style>
 </head>
 <body>
-    <form action="/add" method="post" enctype="multipart/form-data">
-        <table>
-            <tr>
-                <th>英雄名称</th>
-                <td><input type="text" name="name" placeholder="请输入王者荣耀的英雄名称"></td>
-            </tr>
-            <tr>
-                <th>英雄性别</th>
-                <td><input type="radio" name="gender" value="男" id="man"><label for="man">男</label> <input type="radio" name="gender" value="女" id="woman"><label for="woman">女</label></td>
-            </tr>
-            <tr>
-                <th>英雄图像</th>
-                <td><img src="" alt="" id="img"><input type="file" name="img" id="preView"></td>
-            </tr>
-            <tr>
-                <th></th>
-                <td><input type="submit" value="新增"> <input type="reset"></td>
-            </tr>
-        </table>
-    </form>
+  <table>
+    <tr>
+      <th>英雄名称</th>
+      <td><input type="text" name="name" placeholder="请输入王者荣耀的英雄名称"></td>
+    </tr>
+    <tr>
+      <th>英雄性别</th>
+      <td>
+        <input type="radio" name="gender" value="男" id="man"><label for="man">男</label>
+        <input type="radio"name="gender" value="女" id="woman"><label for="woman">女</label>
+      </td>
+    </tr>
+    <tr>
+      <th>英雄图像</th>
+      <td><img src="" alt="" id="img"><input type="file" name="img" id="preView"></td>
+    </tr>
+    <tr>
+      <th></th>
+      <td><input type="submit" value="新增" id="btn"> <input type="reset"></td>
+    </tr>
+  </table>
     <script src="/node_modules/jquery/dist/jquery.min.js"></script>
     <script>
         $('#preView').on('change',function(){
@@ -63,6 +64,31 @@
 									}
                 }
             });
+        });
+        //异步提交
+        $('#btn').click(function(e){
+          //阻止表单默认提交
+          e.preventDefault();
+          //英雄名称
+          var name = $('input[type="text"]').val();
+          //英雄性别
+          var gender = $('input[type="radio"]:checked').val();
+          //英雄头像饿单名称
+          var imgName = $('#img').attr('src');
+          //参数的拼接
+          var params = 'name='+ name +'&gender='+gender+'&img='+imgName;
+          $.ajax({
+            url: '/add',
+            type: 'post',
+            data: params,//提交英雄名称、英雄性别、图片名称
+            dataType: 'json',
+            success:function(data) {
+              if(data.state == 1) {
+                alert(data.msg);
+                window.location = '/';
+              }
+            }
+          });
         });
     </script>
 </body>
