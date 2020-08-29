@@ -1,0 +1,40 @@
+{
+ "heros": [
+  {
+   "id": 1,
+   "name": "李白",
+   "gender": "女",
+   "img": "/imgs/1.jpg"
+  },
+  {
+   "id": 2,
+   "name": "安琪拉",
+   "gender": "女",
+   "img": "/imgs/2.jpg"
+  },
+  {
+   "id": 3,
+   "name": "后羿",
+   "gender": "男",
+   "img": "/imgs/3.jpg"
+  },
+  {
+   "id": 4,
+   "name": "亚瑟",
+   "gender": "男",
+   "img": "/imgs/4.jpg"
+  },
+  {
+   "name": "貂蝉",
+   "gender": "女",
+   "img": "\\imgs\\upload_01ce90ddd0938ddb5b6a083ee22c1aa8.jpg",
+   "id": 5
+  },
+  {
+   "name": "李白111",
+   "gender": "男",
+   "img": "\\imgs\\upload_89b618e87f90c9a24920fc9a99b100ab.jpg",
+   "id": 6
+  }
+ ]
+}

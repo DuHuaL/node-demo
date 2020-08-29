@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+            table {
+                width: 400px;
+                height: 300px;
+                margin: 100px auto;
+                border: 2px solid green;
+            }
+    </style>
+</head>
+<body>
+    <form action="/add" method="post" enctype="multipart/form-data">
+        <table>
+            <tr>
+                <th>英雄名称</th>
+                <td><input type="text" name="name" placeholder="请输入王者荣耀的英雄名称"></td>
+            </tr>
+            <tr>
+                <th>英雄性别</th>
+                <td><input type="radio" name="gender" value="男" id="man"><label for="man">男</label> <input type="radio" name="gender" value="女" id="woman"><label for="woman">女</label></td>
+            </tr>
+            <tr>
+                <th>英雄图像</th>
+                <td><input type="file" name="img"></td>
+            </tr>
+            <tr>
+                <th></th>
+                <td><input type="submit" value="新增"> <input type="reset"></td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>
