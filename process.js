@@ -5,12 +5,16 @@ var uurl = require('url');
 var path = require('path');
 //引入第三方模块
 var formidable = require('formidable');
+var connection = require('./database');
 //当浏览器请求根目录时，将首页响应回去
 module.exports.getIndex = function(req,res) {
-  fs.readFile('./data.json',function(err,hero){
+  //去mysql中读取数据
+  var sql = 'select *from heros';
+  connection.query(sql,(err,result,fields) => {
     if(err) throw err;
-    hero = JSON.parse(hero.toString());
-    res.render('index.html',hero);
+    res.render('index.html',{
+      heros: result
+    });
   });
 };
 //当浏览器请求新增页面时，调用此方法
@@ -29,41 +33,29 @@ module.exports.postAdd = function(req,res) {
     var paramsObj = uurl.parse('?'+str,true).query;
     var data1 = JSON.stringify(paramsObj);
     paramsObj = JSON.parse(data1);
-    //将新增的数据写入到data.json中
-    fs.readFile('./data.json',function(err,hero){
+    //sql语句
+    var sql = `insert into heros (name,gender,img) values ("${paramsObj.name}","${paramsObj.gender}","${paramsObj.img}")`;
+    connection.query(sql,(err,result,fields) => {
       if(err) throw err;
-      hero = JSON.parse(hero.toString());
-      var id = hero.heros[hero.heros.length - 1].id + 1;
-      paramsObj.id = id;
-      hero.heros.push(paramsObj);
-      //重新写入
-      fs.writeFile('./data.json',JSON.stringify(hero,null, ' '),function(err1){
-        if(err1) throw err1;
-        var returnObj = {
-          state: 1,
-          msg: '新增成功'
-        };
-        res.end(JSON.stringify(returnObj));
-      });
+      if(result.affectedRows != 0) {
+        res.json({state: 1,msg: '新增成功'});
+      } else {
+        res.json({state: 0,msg: 0});
+      }
     });
+   
   });
 };
 //获取修改页面
 module.exports.getEdit = function(req,res) {
   var url = req.url;
   var id = uurl.parse(url, true).query.id;
-  fs.readFile('./data.json', function (err1, hero) {
-    if (err1) throw err1;
-    var hero = JSON.parse(hero.toString());
-    //根据id找对应的数据
-    var obj;
-    for (var i = 0; i < hero.heros.length; i++) {
-      if (hero.heros[i].id == id) {
-        obj = hero.heros[i];
-        break;
-      }
-    }
-    res.render('edit.html',obj);
+  //sql语句
+  //根据id获取要修改的数据
+  var sql = `select * from heros where id =${id} `;
+  connection.query(sql,(err,result,fields) => {
+    if(err) throw err;
+    res.render('edit.html', result[0]);
   });
 };
 //提交修改数据
@@ -106,24 +98,17 @@ module.exports.del = function(req,res) {
   var url = req.url;
   //接受id
   var id = uurl.parse(url, true).query.id;
-  //读取data.json文件，获取多有数据
-  fs.readFile('./data.json', function (err, hero) {
-    if (err) throw err;
-    hero = JSON.parse(hero.toString());
-    //遍历
-    for (var i = 0; i < hero.heros.length; i++) {
-      if (hero.heros[i].id == id) {
-        hero.heros.splice(i, 1);
-        break;
-      }
+  //根据id删除对应的数据，生成sql语句
+  var sql = `delete from heros where id = ${id}`;
+  connection.query(sql,(err,result,fields) => {
+    if(err) throw err;
+    if(result.affectedRows != 0) {
+      res.send('<script>alert("删除成功");window.location="/"</script>');
+    } else {
+      res.send('<script>alert("删除失败");window.location="/"</script>');
     }
-    //删除后，重新写入数据
-    fs.writeFile('./data.json', JSON.stringify(hero, null, ' '), function (err1) {
-      if (err1) throw err1;
-      res.setHeader('content-type', 'text/html;charset=utf-8');
-      res.end('<script>alert("删除成功");window.location="/"</script>');
-    });
   });
+  
 };
 //处理图片预览
 module.exports.upload = function(req, res) {
