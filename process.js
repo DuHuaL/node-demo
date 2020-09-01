@@ -81,43 +81,25 @@ module.exports.getEdit = function(req,res) {
   //根据id获取要修改的数据
   var sql = `select * from heros where id =${id} `;
   connection.query(sql,(err,result,fields) => {
-    if(err) throw err;
+    if(err) throw err; 
     res.render('edit.html', result[0]);
   });
 };
 //提交修改数据
 module.exports.postEdit = function(req,res) {
-  //将数据接受并且将新的数据替换掉data.json中原来的数据
-  var str = '';
-  req.on('data', function (chunck) {
-    str += chunck;
-  });
-  req.on('end', function () {
-    str = decodeURI(str);
-    var query = uurl.parse('?' + str, true).query;
-    var data1 = JSON.stringify(query);
-    var obj = JSON.parse(data1);
-    //将新的数据替换掉老的数据
-    // 得到data.json中所有的数据
-    fs.readFile('./data.json', function (err, hero) {
-      if (err) throw err;
-      hero = JSON.parse(hero.toString());
-      //根据修改对象的id,找到对应数据
-      for (var i = 0; i < hero.heros.length; i++) {
-        if (obj.id == hero.heros[i].id) {
-          //将新的值进行替换
-          hero.heros[i].name = obj.name;
-          hero.heros[i].gender = obj.gender;
-          break;
-        }
-      }
-      //将新的数据hero写入到data.json中
-      fs.writeFile('./data.json', JSON.stringify(hero, null, ' '), function (err1) {
-        if (err1) throw err1;
-        res.setHeader('content-type', 'text/html;charset=utf-8');
-        res.end('<script>alert("修改成功");window.location="/"</script>');
-      });
-    });
+  //接受数据
+  var paramsObjs  = req.body;
+  var data1 = JSON.stringify(paramsObjs);
+  paramsObjs = JSON.parse(data1);
+  //sql
+  var sql = `update heros set name="${paramsObjs.name}",gender="${paramsObjs.gender}",img="${paramsObjs.img}" where id=${paramsObjs.id}`;
+  connection.query(sql,(err,result,fields) =>{
+    if(err) throw err;
+    if(result.affectedRows != 0) {
+      res.json({state:1,msg: '更新成功'});
+    } else {
+      res.json({state:0,msg: '更新失败'});
+    }
   });
 };
 //删除数据

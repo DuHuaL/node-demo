@@ -1,49 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <style>
-            table {
-                width: 400px;
-                height: 300px;
-                margin: 100px auto;
-                border: 2px solid green;
-            }
-    </style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+	<style>
+		table {
+			width: 400px;
+			height: 300px;
+			margin: 100px auto;
+			border: 2px solid green;
+		}
+
+		#img {
+			width: 50px;
+			display: block;
+		}
+	</style>
 </head>
+
 <body>
-    <form action="/edit" method="post">
-        <!-- 隐藏域 -->
-        <input type="hidden" name="id" value="{{id}}">
-        <table>
-            <tr>
-                <th>英雄名称</th>
-                <td><input type="text" name="name" value="{{name}}"></td>
-            </tr>
-            <tr>
-                <th>英雄性别</th>
-                <td>
-                    {{if gender === "男"}}
-                    <input type="radio" name="gender" value="男" id="man" checked><label for="man">男</label>
-                    <input type="radio" name="gender" value="女" id="woman"><label for="woman">女</label>
-                    {{else}}
-                    <input type="radio" name="gender" value="男" id="man" ><label for="man">男</label>
-                    <input type="radio" name="gender" value="女" id="woman" checked><label for="woman">女</label>
-                    {{/if}}
-                </td>
-            </tr>
-            <tr>
-                <th>英雄图像</th>
-                <td><input type="file" name="img"></td>
-            </tr>
-            <tr>
-                <th></th>
-                <td><input type="submit" value="修改"> <input type="reset"></td>
-            </tr>
-        </table>
-    </form>
+	<!-- 隐藏域 -->
+	<input type="hidden" name="id" value="{{id}}">
+	<table>
+		<tr>
+			<th>英雄名称</th>
+			<td><input type="text" name="name" value="{{name}}"></td>
+		</tr>
+		<tr>
+			<th>英雄性别</th>
+			<td>
+				{{if gender === "男"}}
+				<input type="radio" name="gender" value="男" id="man" checked><label for="man">男</label>
+				<input type="radio" name="gender" value="女" id="woman"><label for="woman">女</label>
+				{{else}}
+				<input type="radio" name="gender" value="男" id="man"><label for="man">男</label>
+				<input type="radio" name="gender" value="女" id="woman" checked><label for="woman">女</label>
+				{{/if}}
+			</td>
+		</tr>
+		<tr>
+			<th>英雄图像</th>
+			<td><img src="{{img}}" alt="" id="img"><input type="file" name="img" id="preView"></td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><input type="submit" value="修改" id="btn"> <input type="reset"></td>
+		</tr>
+	</table>
+	<script src="/node_modules/jquery/dist/jquery.min.js"></script>
+	<script>
+		//修改图片
+		$('#preView').on('change', function () {
+			//获取要改变的图片对象
+			var data = $('#preView')[0].files[0];
+			//创建一个formData对象
+			var fd = new FormData();
+			fd.append('img', data);
+			$.ajax({
+				url: '/upload',
+				type: 'post',
+				data: fd,
+				contentType: false,//必须：参数类型
+				processData: false,//用于对data参数进行序列化处理，这里必须是false
+				dataType: 'json',
+				success: function (data) {
+					if (data.state == 1) {
+						$('#img').attr('src', '/imgs/' + data.imgName);
+					}
+				}
+			});
+		});
+
+		//修改数据
+		$('#btn').on('click',function(e){
+			//阻止表单默认行为
+			e.preventDefault();
+			var id = $('input[type=hidden]').val();
+			var name = $('input[type=text]').val();
+			var gender = $('input[type=radio]:checked').val();
+			//英雄头像饿单名称
+			var imgName = $('#img').attr('src');
+			//拼接参数
+			var params = 'id='+id+'&name='+name+'&gender='+gender+'&img='+imgName;
+			$.ajax({
+				url: '/edit',
+				type: 'post',
+				data: params,
+				dataType: 'json',
+          success:function(data) {
+            if(data.state == 1) {
+              alert(data.msg);
+              window.location = '/';
+            }
+          }
+			});
+		});
+	</script>
 </body>
+
 </html>

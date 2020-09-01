@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 var router = require('./router');
 //实例对象
 var app = express();
-//使用session
+//注册及使用session
 app.use(cookieSession({
   name: 'session',
   keys: ['key1','key2']
