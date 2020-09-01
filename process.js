@@ -6,16 +6,62 @@ var path = require('path');
 //引入第三方模块
 var formidable = require('formidable');
 var connection = require('./database');
-//当浏览器请求根目录时，将首页响应回去
-module.exports.getIndex = function(req,res) {
-  //去mysql中读取数据
-  var sql = 'select *from heros';
-  connection.query(sql,(err,result,fields) => {
-    if(err) throw err;
-    res.render('index.html',{
-      heros: result
+//登录
+module.exports.getLogin = function(req,res) {
+  res.render('login.html');
+};
+module.exports.postLogin = function(req,res) {
+  //接受参数
+  var str = '';
+  req.on('data',(chunck) => {
+    str += chunck;
+  });
+  req.on('end',() => {
+    var paramsObj = uurl.parse('?'+str,true).query;
+    var data1 = JSON.stringify(paramsObj);
+    paramsObj = JSON.parse(data1);
+    //验证登录
+    //从服务器查询用户信息
+    //sql语句
+    var sql = 'select *from users';
+    connection.query(sql,(err,result,fields) =>{
+      if(err) throw err;
+      for (var i =0;i<result.length;i++) {
+        if(result[i].username == paramsObj.username && result[i].pwd == paramsObj.pwd) {
+          //验证成功
+          //保存session
+          req.session.username = paramsObj.username;
+          //跳转到首页
+          // res.redirect('/');
+          res.send('<script>alert("登录成功");window.location="/"</script>');
+        } else {
+          //验证失败
+          //提示，跳回登录页
+          res.send('<script>alert("用户名或密码错误，请重新登录");window.location="/login"</script>')
+        }
+      }
     });
   });
+};
+//当浏览器请求根目录时，将首页响应回去
+module.exports.getIndex = function(req,res) {
+  //获取session
+  var obj = req.session;
+  if(obj.username) {
+    //说明已登录
+    //去mysql中读取数据
+    var sql = 'select *from heros';
+    connection.query(sql,(err,result,fields) => {
+      if(err) throw err;
+      res.render('index.html',{
+        heros: result
+      });
+    });
+  } else {
+    //未登录
+    //提示，跳转到登录页
+    res.send('<script>alert("请先登录");window.location="/login"</script>');
+  }
 };
 //当浏览器请求新增页面时，调用此方法
 module.exports.getAdd = function(req,res) {

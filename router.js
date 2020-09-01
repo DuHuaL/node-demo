@@ -6,6 +6,8 @@ var router = express.Router();
 var process = require('./process');
 //注册路由
 router
+  .get('/login',process.getLogin)
+  .post('/login',process.postLogin)
   .get('/',function(req,res){
     process.getIndex(req,res);
   })
