@@ -8,6 +8,7 @@ var formidable = require('formidable');
 var connection = require('./database');
 //登录
 module.exports.getLogin = function(req,res) {
+  //将登录页面返回
   res.render('login.html');
 };
 module.exports.postLogin = function(req,res) {
@@ -17,6 +18,7 @@ module.exports.postLogin = function(req,res) {
     str += chunck;
   });
   req.on('end',() => {
+    //参数处理
     var paramsObj = uurl.parse('?'+str,true).query;
     var data1 = JSON.stringify(paramsObj);
     paramsObj = JSON.parse(data1);
@@ -26,6 +28,7 @@ module.exports.postLogin = function(req,res) {
     var sql = 'select *from users';
     connection.query(sql,(err,result,fields) =>{
       if(err) throw err;
+      //遍历每一个用户与用户输入的用户进行判断
       for (var i =0;i<result.length;i++) {
         if(result[i].username == paramsObj.username && result[i].pwd == paramsObj.pwd) {
           //验证成功
@@ -34,6 +37,7 @@ module.exports.postLogin = function(req,res) {
           //跳转到首页
           // res.redirect('/');
           res.send('<script>alert("登录成功");window.location="/"</script>');
+          break;
         } else {
           //验证失败
           //提示，跳回登录页
