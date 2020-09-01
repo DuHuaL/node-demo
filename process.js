@@ -44,10 +44,6 @@ module.exports.postLogin = function(req,res) {
 };
 //当浏览器请求根目录时，将首页响应回去
 module.exports.getIndex = function(req,res) {
-  //获取session
-  var obj = req.session;
-  if(obj.username) {
-    //说明已登录
     //去mysql中读取数据
     var sql = 'select *from heros';
     connection.query(sql,(err,result,fields) => {
@@ -56,11 +52,6 @@ module.exports.getIndex = function(req,res) {
         heros: result
       });
     });
-  } else {
-    //未登录
-    //提示，跳转到登录页
-    res.send('<script>alert("请先登录");window.location="/login"</script>');
-  }
 };
 //当浏览器请求新增页面时，调用此方法
 module.exports.getAdd = function(req,res) {
@@ -70,14 +61,7 @@ module.exports.getAdd = function(req,res) {
 module.exports.postAdd = function(req,res) {
   //满足预览功能大代码
   //接受参数
-  var str = '';
-  req.on('data',function(chunck){
-    str += chunck;
-  });
-  req.on('end',function(){
-    var paramsObj = uurl.parse('?'+str,true).query;
-    var data1 = JSON.stringify(paramsObj);
-    paramsObj = JSON.parse(data1);
+  var paramsObj = req.body;
     //sql语句
     var sql = `insert into heros (name,gender,img) values ("${paramsObj.name}","${paramsObj.gender}","${paramsObj.img}")`;
     connection.query(sql,(err,result,fields) => {
@@ -88,8 +72,6 @@ module.exports.postAdd = function(req,res) {
         res.json({state: 0,msg: 0});
       }
     });
-   
-  });
 };
 //获取修改页面
 module.exports.getEdit = function(req,res) {
