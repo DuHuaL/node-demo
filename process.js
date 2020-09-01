@@ -12,14 +12,10 @@ module.exports.getLogin = function(req,res) {
   res.render('login.html');
 };
 module.exports.postLogin = function(req,res) {
-  //接受参数
-  var str = '';
-  req.on('data',(chunck) => {
-    str += chunck;
-  });
-  req.on('end',() => {
-    //参数处理
-    var paramsObj = uurl.parse('?'+str,true).query;
+    //接受参数
+    // console.log(req.body);
+    // [Object: null prototype] { username: 'admin', pwd: '123456' }
+    var paramsObj = req.body;
     var data1 = JSON.stringify(paramsObj);
     paramsObj = JSON.parse(data1);
     //验证登录
@@ -45,7 +41,6 @@ module.exports.postLogin = function(req,res) {
         }
       }
     });
-  });
 };
 //当浏览器请求根目录时，将首页响应回去
 module.exports.getIndex = function(req,res) {
