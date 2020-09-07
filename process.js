@@ -87,6 +87,7 @@ module.exports.getEdit = function(req,res) {
 };
 //提交修改数据
 module.exports.postEdit = function(req,res) {
+  // console.log(req.url);
   //接受数据
   var paramsObjs  = req.body;
   var data1 = JSON.stringify(paramsObjs);
